@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corporate Price Calculator 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prata&display=swap" rel="stylesheet">
+<style>
+:root {
+  --je-teal-deep: #006C75;
+  --je-teal-deep-hover: #19818A;
+  --je-gold-dark: #b9a16f;
+  --je-gold-light: #dfd5c0;
+  --je-black: #151515;
+  --je-mid-gray: #606060;
+  --je-light-gray: #878787;
+  --je-muted-gray: #ADADAD;
+  --je-border: #E0E0E0;
+  --je-divider: #ececec;
+  --je-off-white: #F5F5F5;
+  --je-near-white: #F7F7F7;
+  --je-white: #FFFFFF;
+  --je-error: #E63232;
+  --font-sans: 'Inter', Arial, sans-serif;
+  --font-serif: 'Prata', serif;
+  --radius: 4px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: var(--je-black); background: var(--je-near-white); -webkit-font-smoothing: antialiased; }
+
+.header { background: var(--je-white); border-bottom: 1px solid var(--je-divider); padding: 0 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-logo { width: 28px; height: 28px; background: var(--je-black); border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+.header-logo svg { width: 16px; height: 16px; }
+.header-title { font-size: 15px; font-weight: 600; color: var(--je-black); letter-spacing: -0.01em; }
+.header-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: var(--je-black); color: var(--je-white); padding: 3px 8px; border-radius: 30px; margin-left: 4px; }
+.header-meta { font-size: 11px; color: var(--je-light-gray); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 40px 32px 64px; }
+.field-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--je-light-gray); margin-bottom: 6px; }
+
+.config-card { background: var(--je-white); border: 1px solid var(--je-divider); border-radius: var(--radius); padding: 24px; margin-bottom: 32px; }
+.config-row { display: grid; grid-template-columns: 180px 120px 100px 100px 36px; gap: 12px; align-items: end; padding: 12px 0; border-bottom: 1px solid var(--je-near-white); }
+.config-row:first-child { padding-top: 0; }
+.config-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+select { width: 100%; padding: 9px 12px; border: 1px solid var(--je-border); border-radius: var(--radius); font-size: 14px; font-family: var(--font-sans); color: var(--je-black); background: var(--je-white); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23878787' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; cursor: pointer; outline: none; transition: border-color 200ms ease; }
+select:focus { border-color: var(--je-mid-gray); }
+
+.btn-remove { width: 36px; height: 36px; border: 1px solid var(--je-border); border-radius: var(--radius); background: var(--je-white); color: var(--je-muted-gray); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 200ms ease; align-self: end; }
+.btn-remove:hover { border-color: var(--je-error); color: var(--je-error); background: #fff5f5; }
+
+.config-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--je-divider); }
+.btn-add { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1px dashed var(--je-teal-deep); border-radius: var(--radius); background: transparent; color: var(--je-teal-deep); font-size: 13px; font-weight: 500; font-family: var(--font-sans); cursor: pointer; transition: background 200ms ease; }
+.btn-add:hover { background: #f0f9fa; }
+
+.deal-id-wrap { display: flex; align-items: center; gap: 10px; }
+.deal-id-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--je-light-gray); }
+.deal-id-input { padding: 8px 12px; width: 180px; border: 1px solid var(--je-border); border-radius: var(--radius); font-size: 14px; font-family: var(--font-sans); color: var(--je-black); outline: none; transition: border-color 200ms ease; }
+.deal-id-input:focus { border-color: var(--je-mid-gray); }
+.deal-id-input::placeholder { color: var(--je-muted-gray); }
+
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+@media (max-width: 700px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+.pricing-card { background: var(--je-white); border: 1px solid var(--je-divider); border-radius: var(--radius); overflow: hidden; }
+.pricing-card.elite-plus { border-color: var(--je-gold-dark); }
+.card-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--je-divider); position: relative; }
+.card-header.elite-plus-header { background: #fdfaf5; border-bottom-color: var(--je-gold-light); }
+.card-type { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--je-light-gray); margin-bottom: 4px; }
+.card-name { font-size: 20px; font-weight: 600; color: var(--je-black); letter-spacing: -0.02em; }
+.card-sub { font-size: 13px; color: var(--je-mid-gray); margin-top: 3px; }
+.card-elp { font-size: 13px; color: var(--je-teal-deep); font-weight: 500; margin-top: 2px; }
+.badge-rec { position: absolute; top: 20px; right: 20px; background: var(--je-gold-dark); color: var(--je-white); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 30px; }
+
+.period-row { padding: 18px 24px; border-bottom: 1px solid var(--je-near-white); }
+.period-row:last-child { border-bottom: none; }
+.period-row.elite-plus-row { background: #fdfaf5; }
+.period-name { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--je-light-gray); margin-bottom: 6px; }
+.save-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 30px; margin-bottom: 6px; }
+.save-badge.teal { background: var(--je-teal-deep); color: var(--je-white); }
+.save-badge.gold { background: var(--je-gold-dark); color: var(--je-white); }
+.price-amount { font-size: 28px; font-weight: 700; color: var(--je-black); letter-spacing: -0.03em; line-height: 1; margin-bottom: 3px; }
+.price-monthly { font-size: 12px; color: var(--je-light-gray); margin-top: 2px; }
+
+.btn-update { margin-top: 12px; width: 100%; padding: 8px 12px; border: 1px solid var(--je-border); border-radius: var(--radius); background: transparent; font-size: 12px; font-weight: 500; font-family: var(--font-sans); color: var(--je-mid-gray); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 200ms ease; }
+.btn-update:hover { border-color: var(--je-teal-deep); color: var(--je-teal-deep); background: #f0f9fa; }
+.btn-update:disabled { color: var(--je-muted-gray); border-color: var(--je-divider); cursor: not-allowed; background: transparent; }
+.btn-update.sent { border-color: var(--je-teal-deep); color: var(--je-teal-deep); background: #eaf6f6; }
+.elite-plus-row .btn-update:hover { border-color: var(--je-gold-dark); color: var(--je-gold-dark); background: #fdf7ef; }
+.elite-plus-row .btn-update.sent { border-color: var(--je-gold-dark); color: var(--je-gold-dark); background: #fdf7ef; }
+
+.breakdown-card { background: var(--je-white); border: 1px solid var(--je-divider); border-radius: var(--radius); overflow: hidden; }
+.breakdown-header { padding: 16px 24px; border-bottom: 1px solid var(--je-divider); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--je-light-gray); }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--je-light-gray); border-bottom: 1px solid var(--je-divider); white-space: nowrap; }
+td { padding: 12px 16px; border-bottom: 1px solid var(--je-near-white); color: var(--je-black); }
+tr.total-row td { font-weight: 600; border-top: 1px solid var(--je-divider); border-bottom: none; background: var(--je-near-white); }
+tr:last-child td { border-bottom: none; }
+
+.hs-status { padding: 12px 24px; font-size: 13px; border-top: 1px solid var(--je-divider); display: none; }
+.hs-status.success { background: #eaf6f5; color: var(--je-teal-deep); display: block; }
+.hs-status.error   { background: #fef2f2; color: var(--je-error); display: block; }
+.hs-status.loading { background: var(--je-near-white); color: var(--je-mid-gray); display: block; }
+.empty { background: var(--je-white); border: 1px solid var(--je-divider); border-radius: var(--radius); padding: 56px 32px; text-align: center; color: var(--je-light-gray); font-size: 14px; }
+.footer { text-align: center; padding: 32px 0 0; font-size: 11px; color: var(--je-muted-gray); letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" fill="white"/><rect x="9" y="2" width="5" height="5" fill="white"/><rect x="2" y="9" width="5" height="5" fill="white"/><rect x="9" y="9" width="5" height="5" fill="white" opacity="0.4"/></svg>
+    </div>
+    <span class="header-title">Price Calculator</span>
+    <span class="header-badge">Corporate</span>
+  </div>
+  <span class="header-meta">Data refreshed Apr 2026</span>
+</header>
+
+<div class="wrap">
+  <div class="config-card">
+    <div id="rows-container"></div>
+    <div class="config-footer">
+      <button class="btn-add" id="btn-add">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add Location
+      </button>
+      <div class="deal-id-wrap">
+        <svg width="16" height="16" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="28" fill="#FF7A59"/><path d="M22 16v10.5M22 26.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM34 22.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0-3v7.5m0 0a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <span class="deal-id-label">Deal ID</span>
+        <input type="text" id="hs-deal-id" class="deal-id-input" placeholder="e.g. 12345678">
+      </div>
+    </div>
+  </div>
+  <div id="output"></div>
+  <div class="footer">JamesEdition · BigQuery · 12-month rolling window · Real estate, excl. rentals · Includes large offices</div>
+</div>
+
+<script>
+var N8N_WEBHOOK_URL = "https://james-edition.app.n8n.cloud/webhook/price-calculator-hs";
+
+var COUNTRY_NAMES = { AE:"UAE 🇦🇪", CH:"Switzerland 🇨🇭", ES:"Spain 🇪🇸", FR:"France 🇫🇷", GB:"United Kingdom 🇬🇧", GR:"Greece 🇬🇷", IT:"Italy 🇮🇹", Other:"Other 🌍", PT:"Portugal 🇵🇹", US:"United States 🇺🇸", ZA:"South Africa 🇿🇦" };
+
+// From datasets.price_calculator_corp (hotspot listings, excl. large offices)
+// price_base = median * commission * conversion * leads_per_listing (per listing, pre-take-rate)
+// price_elp  = median * commission * conversion * lead_per_elp_3m * 0.10 * demand_multiplier (per ELP slot, fixed)
+var COUNTRY_DATA = {
+  AE:    { price_base:1592.6733, price_elp:732.00 },
+  CH:    { price_base:2304.6493, price_elp:844.00 },
+  ES:    { price_base: 350.0841, price_elp:362.00 },
+  FR:    { price_base: 427.7581, price_elp:283.00 },
+  GB:    { price_base: 513.9847, price_elp:497.00 },
+  GR:    { price_base: 192.3869, price_elp:243.00 },
+  IT:    { price_base: 730.8197, price_elp:333.00 },
+  Other: { price_base:1359.8109, price_elp:546.00 },
+  PT:    { price_base: 342.2712, price_elp:270.00 },
+  US:    { price_base:1646.5535, price_elp:3006.00 },
+  ZA:    { price_base:1458.2414, price_elp:259.00 },
+};
+
+var TAKE_RATES = [
+  { label:"1%",  rate:0.01 },
+  { label:"2%",  rate:0.02 },
+  { label:"3%",  rate:0.03 },
+  { label:"4%",  rate:0.04 },
+  { label:"5%",  rate:0.05 },
+  { label:"6%",  rate:0.06 },
+  { label:"7%",  rate:0.07 },
+  { label:"8%",  rate:0.08 },
+  { label:"10%", rate:0.10 },
+];
+var DEFAULT_RATE_IDX = 4; // 5%
+
+var LISTING_COUNTS = [];
+for (var n = 50; n <= 1000; n += 50) LISTING_COUNTS.push(n);
+
+var rows = [], nextId = 0, lastPricing = null;
+
+function psych(v) {
+  if (v <= 0) return 0;
+  if (v < 1000)  return Math.round(v / 10) * 10;
+  if (v < 10000) return Math.round(v / 100) * 100;
+  return Math.round(v / 500) * 500;
+}
+function fmt(v) { return "€" + v.toLocaleString("en-US"); }
+function fmtDec(v) { return "€" + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+function calcPrice(d, take_rate, count) {
+  return d.price_base * take_rate * count;
+}
+function calcElp(d, elps) {
+  return d.price_elp * elps;
+}
+
+function addRow(cc, cnt, rateIdx, elps) {
+  rows.push({ id: nextId++, country: cc || "ES", count: cnt || 50, rateIdx: rateIdx != null ? rateIdx : DEFAULT_RATE_IDX, elps: elps != null ? elps : 7 });
+  renderRows(); render();
+}
+function removeRow(id) { rows = rows.filter(function(r){ return r.id !== id; }); renderRows(); render(); }
+
+function renderRows() {
+  var c = document.getElementById("rows-container");
+  c.innerHTML = "";
+  rows.forEach(function(r) {
+    var div = document.createElement("div");
+    div.className = "config-row";
+    var showX = rows.length > 1;
+
+    var h = '<div><label class="field-label">Country</label><select class="sel-country" data-id="' + r.id + '">';
+    Object.keys(COUNTRY_NAMES).sort().forEach(function(k){ h += '<option value="' + k + '"' + (r.country===k?" selected":"") + '>' + COUNTRY_NAMES[k] + '</option>'; });
+    h += '</select></div>';
+
+    h += '<div><label class="field-label">Listings</label><select class="sel-count" data-id="' + r.id + '">';
+    LISTING_COUNTS.forEach(function(n){ h += '<option value="' + n + '"' + (r.count===n?" selected":"") + '>' + n + '</option>'; });
+    h += '</select></div>';
+
+    h += '<div><label class="field-label">Take Rate</label><select class="sel-rate" data-id="' + r.id + '">';
+    TAKE_RATES.forEach(function(t, i){ h += '<option value="' + i + '"' + (r.rateIdx===i?" selected":"") + '>' + t.label + '</option>'; });
+    h += '</select></div>';
+
+    h += '<div><label class="field-label">ELPs</label><select class="sel-elps" data-id="' + r.id + '">';
+    for (var j = 0; j <= 50; j++) { if (j === 1) continue; h += '<option value="' + j + '"' + (r.elps===j?" selected":"") + '>' + j + '</option>'; }
+    h += '</select></div>';
+
+    h += showX ? '<button class="btn-remove" data-id="' + r.id + '" style="align-self:end">×</button>' : '<div></div>';
+    div.innerHTML = h;
+    c.appendChild(div);
+  });
+
+  c.querySelectorAll(".sel-country").forEach(function(el){ el.addEventListener("change", function(){ var id=parseInt(this.getAttribute("data-id")); rows.forEach(function(r){ if(r.id===id) r.country=el.value; }); renderRows(); render(); }); });
+  c.querySelectorAll(".sel-count").forEach(function(el){ el.addEventListener("change", function(){ var id=parseInt(this.getAttribute("data-id")); rows.forEach(function(r){ if(r.id===id) r.count=parseInt(el.value); }); render(); }); });
+  c.querySelectorAll(".sel-rate").forEach(function(el){ el.addEventListener("change", function(){ var id=parseInt(this.getAttribute("data-id")); rows.forEach(function(r){ if(r.id===id) r.rateIdx=parseInt(el.value); }); render(); }); });
+  c.querySelectorAll(".sel-elps").forEach(function(el){ el.addEventListener("change", function(){ var id=parseInt(this.getAttribute("data-id")); rows.forEach(function(r){ if(r.id===id) r.elps=parseInt(el.value); }); render(); }); });
+  c.querySelectorAll(".btn-remove").forEach(function(el){ el.addEventListener("click", function(){ removeRow(parseInt(this.getAttribute("data-id"))); }); });
+}
+
+function render() {
+  var $o = document.getElementById("output");
+  var rowCalcs = [], totalListings = 0, totalElps = 0, hasAny = false;
+
+  rows.forEach(function(r) {
+    var d = COUNTRY_DATA[r.country] || COUNTRY_DATA['Other'];
+    var rate = TAKE_RATES[r.rateIdx].rate;
+    hasAny = true;
+    totalListings += r.count; totalElps += r.elps;
+    var raw3 = calcPrice(d, rate, r.count);
+    rowCalcs.push({
+      country: r.country, cnt: r.count, elps: r.elps,
+      rateLabel: TAKE_RATES[r.rateIdx].label,
+      e3r:  raw3,
+      e6r:  raw3 * 2 * 0.9,
+      e12r: raw3 * 4 * 0.8,
+      elp3r:  calcElp(d, r.elps),
+      elp6r:  calcElp(d, r.elps) * 2 * 0.9,
+      elp12r: calcElp(d, r.elps) * 4 * 0.8,
+    });
+  });
+
+  if (!hasAny) { lastPricing = null; $o.innerHTML = '<div class="empty">Select a listing count to see pricing.</div>'; return; }
+
+  var e3=0,e6=0,e12=0,elp3=0,elp6=0,elp12=0;
+  rowCalcs.forEach(function(rc){
+    e3+=psych(rc.e3r); e6+=psych(rc.e6r); e12+=psych(rc.e12r);
+    elp3+=psych(rc.elp3r); elp6+=psych(rc.elp6r); elp12+=psych(rc.elp12r);
+  });
+  e3=Math.max(e3,300); e6=Math.max(e6,570); e12=Math.max(e12,1080);
+  var ep3=e3+elp3, ep6=e6+elp6, ep12=e12+elp12;
+  var eS6=Math.max(e3*2-e6,0), eS12=Math.max(e3*4-e12,0);
+  var epS6=Math.max(ep3*2-ep6,0), epS12=Math.max(ep3*4-ep12,0);
+
+  var listingLabel = rowCalcs.map(function(r){ return r.cnt; }).join(" + ") + " Listings";
+  var provinceSummary = rowCalcs.map(function(rc){ return (COUNTRY_NAMES[rc.country]||rc.country) + ": " + rc.cnt + " listings @ " + rc.rateLabel + " take rate, " + rc.elps + " ELPs"; }).join("\n");
+
+  lastPricing = { elite_3m:e3, elite_6m:e6, elite_12m:e12, ep_3m:ep3, ep_6m:ep6, ep_12m:ep12, totalListings:totalListings, totalElps:totalElps, listingLabel:listingLabel, provinceSummary:provinceSummary, provinceLabel:rowCalcs.map(function(r){ return COUNTRY_NAMES[r.country]||r.country; }).join(", "), countryLabel:rowCalcs.map(function(r){ return r.country; }).join(", ") };
+
+  var hsIcon = '<svg width="12" height="12" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="28" fill="#FF7A59"/><path d="M22 16v10.5M22 26.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM34 22.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0-3v7.5m0 0a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+  var periods = [
+    { label:"3 Months",  mo:3,  eT:e3,  epT:ep3,  eS:0,    epS:0     },
+    { label:"6 Months",  mo:6,  eT:e6,  epT:ep6,  eS:eS6,  epS:epS6  },
+    { label:"12 Months", mo:12, eT:e12, epT:ep12, eS:eS12, epS:epS12 },
+  ];
+  var planKeys = ["elite_3m","elite_6m","elite_12m"];
+  var epKeys   = ["ep_3m","ep_6m","ep_12m"];
+
+  var h = '<div class="pricing-grid">';
+
+  h += '<div class="pricing-card"><div class="card-header"><div class="card-type">Corporate Subscription</div><div class="card-name">Elite</div><div class="card-sub">' + listingLabel + '</div><div class="card-sub" style="visibility:hidden">_</div></div>';
+  periods.forEach(function(p, i){
+    h += '<div class="period-row"><div class="period-name">' + p.label + '</div>';
+    if (p.eS > 0) h += '<div><span class="save-badge teal">Save ' + fmt(p.eS) + '</span></div>';
+    h += '<div class="price-amount">' + fmt(p.eT) + '</div><div class="price-monthly">' + fmtDec(p.eT/p.mo) + ' / month</div>';
+    h += '<button class="btn-update" data-plan="' + planKeys[i] + '">' + hsIcon + 'Update Deal</button></div>';
+  });
+  h += '</div>';
+
+  h += '<div class="pricing-card elite-plus"><div class="card-header elite-plus-header"><span class="badge-rec">Recommended</span><div class="card-type">Corporate Subscription + Promoted</div><div class="card-name">Elite Plus</div><div class="card-sub">' + listingLabel + '</div>';
+  if (totalElps > 0) h += '<div class="card-elp">' + totalElps + ' Promoted Listing' + (totalElps!==1?'s':'') + '</div>';
+  else h += '<div class="card-sub" style="visibility:hidden">_</div>';
+  h += '</div>';
+  periods.forEach(function(p, i){
+    h += '<div class="period-row elite-plus-row"><div class="period-name">' + p.label + '</div>';
+    if (p.epS > 0) h += '<div><span class="save-badge gold">Save ' + fmt(p.epS) + '</span></div>';
+    h += '<div class="price-amount">' + fmt(p.epT) + '</div><div class="price-monthly">' + fmtDec(p.epT/p.mo) + ' / month</div>';
+    h += '<button class="btn-update" data-plan="' + epKeys[i] + '">' + hsIcon + 'Update Deal</button></div>';
+  });
+  h += '</div></div>';
+
+  h += '<div class="breakdown-card"><div class="breakdown-header">Price Breakdown</div><div class="tbl-wrap"><table><thead><tr>';
+  h += '<th>Country</th><th>Listings</th><th>Take Rate</th><th>ELPs</th>';
+  h += '<th>Elite 3m</th><th>Elite 6m</th><th>Elite 12m</th><th>Elite+ 3m</th><th>Elite+ 6m</th><th>Elite+ 12m</th>';
+  h += '</tr></thead><tbody>';
+  rowCalcs.forEach(function(rc){
+    var te3,te6,te12,tep3,tep6,tep12;
+    if (rowCalcs.length === 1) { te3=e3; te6=e6; te12=e12; tep3=ep3; tep6=ep6; tep12=ep12; }
+    else { te3=psych(rc.e3r); te6=psych(rc.e6r); te12=psych(rc.e12r); tep3=te3+psych(rc.elp3r); tep6=te6+psych(rc.elp6r); tep12=te12+psych(rc.elp12r); }
+    h += '<tr><td>' + (COUNTRY_NAMES[rc.country]||rc.country) + '</td><td>' + rc.cnt + '</td><td>' + rc.rateLabel + '</td><td>' + rc.elps + '</td>';
+    h += '<td>'+fmt(te3)+'</td><td>'+fmt(te6)+'</td><td>'+fmt(te12)+'</td><td>'+fmt(tep3)+'</td><td>'+fmt(tep6)+'</td><td>'+fmt(tep12)+'</td></tr>';
+  });
+  if (rowCalcs.length > 1) {
+    h += '<tr class="total-row"><td>Total</td><td>'+totalListings+'</td><td>—</td><td>'+totalElps+'</td>';
+    h += '<td>'+fmt(e3)+'</td><td>'+fmt(e6)+'</td><td>'+fmt(e12)+'</td><td>'+fmt(ep3)+'</td><td>'+fmt(ep6)+'</td><td>'+fmt(ep12)+'</td></tr>';
+  }
+  h += '</tbody></table></div><div id="hs-status" class="hs-status"></div></div>';
+
+  $o.innerHTML = h;
+  $o.querySelectorAll(".btn-update").forEach(function(btn){ btn.addEventListener("click", function(){ pushToHubSpot(this.getAttribute("data-plan"), this); }); });
+}
+
+function pushToHubSpot(planKey, btn) {
+  var dealId = (document.getElementById("hs-deal-id").value||"").trim();
+  var $st = document.getElementById("hs-status");
+  if (!dealId) { $st.className="hs-status error"; $st.textContent="Please enter a HubSpot Deal ID first."; document.getElementById("hs-deal-id").focus(); return; }
+  if (!lastPricing) { $st.className="hs-status error"; $st.textContent="No pricing data."; return; }
+  var planLabels = { elite_3m:"Elite — 3 Months", elite_6m:"Elite — 6 Months", elite_12m:"Elite — 12 Months", ep_3m:"Elite Plus — 3 Months", ep_6m:"Elite Plus — 6 Months", ep_12m:"Elite Plus — 12 Months" };
+  var subTypes   = { elite_3m:"Elite", elite_6m:"Elite", elite_12m:"Elite", ep_3m:"Elite Plus", ep_6m:"Elite Plus", ep_12m:"Elite Plus" };
+  var termMonths = { elite_3m:3, elite_6m:6, elite_12m:12, ep_3m:3, ep_6m:6, ep_12m:12 };
+  var payload = { deal_id:dealId, plan_label:planLabels[planKey], amount:lastPricing[planKey], elite_3m:lastPricing.elite_3m, elite_6m:lastPricing.elite_6m, elite_12m:lastPricing.elite_12m, ep_3m:lastPricing.ep_3m, ep_6m:lastPricing.ep_6m, ep_12m:lastPricing.ep_12m, listing_label:lastPricing.listingLabel, total_listings:lastPricing.totalListings, total_elps:lastPricing.totalElps, province_summary:lastPricing.provinceSummary, price_country:lastPricing.countryLabel, price_sub_type:subTypes[planKey], price_term_months:termMonths[planKey], price_listings:lastPricing.listingLabel, price_additional_elps:lastPricing.totalElps, price_province:lastPricing.provinceLabel };
+  var allBtns = document.querySelectorAll(".btn-update");
+  allBtns.forEach(function(b){ b.disabled=true; });
+  var orig = btn.innerHTML;
+  btn.innerHTML = "Sending…";
+  $st.className="hs-status loading"; $st.textContent="Updating deal " + dealId + "…";
+  fetch(N8N_WEBHOOK_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) })
+    .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json().catch(function(){ return {}; }); })
+    .then(function(){ $st.className="hs-status success"; $st.textContent="✓ Deal "+dealId+" updated — "+planLabels[planKey]+" ("+fmt(lastPricing[planKey])+") set as amount."; btn.innerHTML="✓ Sent"; btn.classList.add("sent"); setTimeout(function(){ btn.innerHTML=orig; btn.classList.remove("sent"); }, 3000); allBtns.forEach(function(b){ b.disabled=false; }); })
+    .catch(function(err){ $st.className="hs-status error"; $st.textContent="Error: "+err.message; btn.innerHTML=orig; allBtns.forEach(function(b){ b.disabled=false; }); });
+}
+
+document.getElementById("btn-add").addEventListener("click", function(){ addRow(); });
+addRow("ES", 50, DEFAULT_RATE_IDX, 7);
+</script>
+</body>
+</html>
