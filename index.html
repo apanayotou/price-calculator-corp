@@ -100,7 +100,13 @@ td { padding: 12px 16px; border-bottom: 1px solid var(--je-near-white); color: v
 tr.total-row td { font-weight: 600; border-top: 1px solid var(--je-divider); border-bottom: none; background: var(--je-near-white); }
 tr:last-child td { border-bottom: none; }
 
-.hs-status { padding: 12px 24px; font-size: 13px; border-top: 1px solid var(--je-divider); display: none; }
+.tab-bar { display: flex; border-bottom: 1px solid var(--je-divider); padding: 0 24px; background: var(--je-white); }
+.tab-btn { padding: 12px 18px; font-size: 13px; font-weight: 600; color: var(--je-muted-gray); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: var(--font-sans); margin-bottom: -1px; transition: color 200ms, border-color 200ms; }
+.tab-btn.active { color: var(--je-black); border-bottom-color: var(--je-teal-deep); }
+.tab-btn:hover:not(.active) { color: var(--je-mid-gray); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+ font-size: 13px; border-top: 1px solid var(--je-divider); display: none; }
 .hs-status.success { background: #eaf6f5; color: var(--je-teal-deep); display: block; }
 .hs-status.error   { background: #fef2f2; color: var(--je-error); display: block; }
 .hs-status.loading { background: var(--je-near-white); color: var(--je-mid-gray); display: block; }
@@ -161,6 +167,22 @@ var COUNTRY_DATA = {
   US:    { price_base:1646.5535, price_elp:3006.00 },
   ZA:    { price_base:1458.2414, price_elp:259.00 },
 };
+
+// Full component data for Components tab display
+var COUNTRY_DATA_FULL = {
+  AE:    { median:8866912, commission:0.020, leads_per_listing:0.0948, lead_per_elp_3m:1.3467, demand_multiplier:0.900 },
+  CH:    { median:5761624, commission:0.025, leads_per_listing:0.9833, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
+  ES:    { median:2756000, commission:0.030, leads_per_listing:0.1681, lead_per_elp_3m:1.1330, demand_multiplier:1.010 },
+  FR:    { median:2490000, commission:0.030, leads_per_listing:0.2248, lead_per_elp_3m:2.3662, demand_multiplier:0.900 },
+  GB:    { median:4395000, commission:0.013, leads_per_listing:0.2788, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
+  GR:    { median:1900000, commission:0.030, leads_per_listing:0.0887, lead_per_elp_3m:0.9964, demand_multiplier:1.300 },
+  IT:    { median:1890000, commission:0.030, leads_per_listing:0.4502, lead_per_elp_3m:2.0376, demand_multiplier:0.900 },
+  Other: { median:3100000, commission:0.030, leads_per_listing:0.8390, lead_per_elp_3m:1.9754, demand_multiplier:0.934 },
+  PT:    { median:2150000, commission:0.030, leads_per_listing:0.1066, lead_per_elp_3m:1.1387, demand_multiplier:0.920 },
+  US:    { median:8200000, commission:0.055, leads_per_listing:0.1232, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
+  ZA:    { median:1950000, commission:0.030, leads_per_listing:0.9933, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
+};
+
 
 var TAKE_RATES = [
   { label:"1%",  rate:0.01 },
@@ -309,7 +331,14 @@ function render() {
   });
   h += '</div></div>';
 
-  h += '<div class="breakdown-card"><div class="breakdown-header">Price Breakdown</div><div class="tbl-wrap"><table><thead><tr>';
+  h += '<div class="breakdown-card">';
+  h += '<div class="tab-bar">';
+  h += '<button class="tab-btn active" onclick="showTab(this,\'tab-prices\')">Prices</button>';
+  h += '<button class="tab-btn" onclick="showTab(this,\'tab-components\')">Components</button>';
+  h += '</div>';
+
+  // Tab 1: Prices
+  h += '<div id="tab-prices" class="tab-pane active"><div class="tbl-wrap"><table><thead><tr>';
   h += '<th>Country</th><th>Listings</th><th>Take Rate</th><th>ELPs</th>';
   h += '<th>Elite 3m</th><th>Elite 6m</th><th>Elite 12m</th><th>Elite+ 3m</th><th>Elite+ 6m</th><th>Elite+ 12m</th>';
   h += '</tr></thead><tbody>';
@@ -324,7 +353,34 @@ function render() {
     h += '<tr class="total-row"><td>Total</td><td>'+totalListings+'</td><td>—</td><td>'+totalElps+'</td>';
     h += '<td>'+fmt(e3)+'</td><td>'+fmt(e6)+'</td><td>'+fmt(e12)+'</td><td>'+fmt(ep3)+'</td><td>'+fmt(ep6)+'</td><td>'+fmt(ep12)+'</td></tr>';
   }
-  h += '</tbody></table></div><div id="hs-status" class="hs-status"></div></div>';
+  h += '</tbody></table></div></div>';
+
+  // Tab 2: Components
+  h += '<div id="tab-components" class="tab-pane"><div class="tbl-wrap"><table><thead><tr>';
+  h += '<th>Country</th><th>Median Lead Value</th><th>Commission</th><th>Leads / Listing</th><th>Price Base</th><th>Lead / ELP</th><th>Demand Mult.</th><th>ELP Price (3m)</th>';
+  h += '</tr></thead><tbody>';
+  var seenCountries = {};
+  rowCalcs.forEach(function(rc){
+    if (seenCountries[rc.country]) return;
+    seenCountries[rc.country] = true;
+    var d = COUNTRY_DATA[rc.country] || COUNTRY_DATA['Other'];
+    var cdata_full = COUNTRY_DATA_FULL[rc.country] || {};
+    h += '<tr>';
+    h += '<td>' + (COUNTRY_NAMES[rc.country]||rc.country) + '</td>';
+    var commPct = cdata_full.commission ? cdata_full.commission * 100 : null;
+    var commStr = commPct !== null ? (Number.isInteger(commPct) ? commPct : commPct.toFixed(1)) + '%' : '—';
+    h += '<td>' + (cdata_full.median ? '€' + Math.round(cdata_full.median).toLocaleString('en-US') : '—') + '</td>';
+    h += '<td>' + commStr + '</td>';
+    h += '<td>' + (cdata_full.leads_per_listing !== undefined ? cdata_full.leads_per_listing : '—') + '</td>';
+    h += '<td>' + (d.price_base !== undefined ? d.price_base.toFixed(4) : '—') + '</td>';
+    h += '<td>' + (cdata_full.lead_per_elp_3m !== undefined ? cdata_full.lead_per_elp_3m : '—') + '</td>';
+    h += '<td>' + (cdata_full.demand_multiplier !== undefined ? cdata_full.demand_multiplier + '×' : '—') + '</td>';
+    h += '<td>' + fmt(d.price_elp) + '</td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  h += '<div id="hs-status" class="hs-status"></div></div>';
 
   $o.innerHTML = h;
   $o.querySelectorAll(".btn-update").forEach(function(btn){ btn.addEventListener("click", function(){ pushToHubSpot(this.getAttribute("data-plan"), this); }); });
@@ -348,6 +404,14 @@ function pushToHubSpot(planKey, btn) {
     .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json().catch(function(){ return {}; }); })
     .then(function(){ $st.className="hs-status success"; $st.textContent="✓ Deal "+dealId+" updated — "+planLabels[planKey]+" ("+fmt(lastPricing[planKey])+") set as amount."; btn.innerHTML="✓ Sent"; btn.classList.add("sent"); setTimeout(function(){ btn.innerHTML=orig; btn.classList.remove("sent"); }, 3000); allBtns.forEach(function(b){ b.disabled=false; }); })
     .catch(function(err){ $st.className="hs-status error"; $st.textContent="Error: "+err.message; btn.innerHTML=orig; allBtns.forEach(function(b){ b.disabled=false; }); });
+}
+
+function showTab(btn, tabId) {
+  var box = btn.closest('.breakdown-card');
+  box.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  box.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
 }
 
 document.getElementById("btn-add").addEventListener("click", function(){ addRow(); });
