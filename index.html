@@ -149,38 +149,28 @@ tr:last-child td { border-bottom: none; }
 <script>
 var N8N_WEBHOOK_URL = "https://james-edition.app.n8n.cloud/webhook/price-calculator-hs";
 
-var COUNTRY_NAMES = { AE:"UAE 🇦🇪", CH:"Switzerland 🇨🇭", ES:"Spain 🇪🇸", FR:"France 🇫🇷", GB:"United Kingdom 🇬🇧", GR:"Greece 🇬🇷", IT:"Italy 🇮🇹", Other:"Other 🌍", PT:"Portugal 🇵🇹", US:"United States 🇺🇸", ZA:"South Africa 🇿🇦" };
+var COUNTRY_NAMES = { ES:"Spain 🇪🇸", FR:"France 🇫🇷", GB:"United Kingdom 🇬🇧", GR:"Greece 🇬🇷", IT:"Italy 🇮🇹", PT:"Portugal 🇵🇹" };
 
 // From datasets.price_calculator_corp (hotspot listings, excl. large offices)
 // price_base = median * commission * conversion * leads_per_listing (per listing, pre-take-rate)
 // price_elp  = median * commission * conversion * lead_per_elp_3m * 0.10 * demand_multiplier (per ELP slot, fixed)
 var COUNTRY_DATA = {
-  AE:    { price_base:1592.6733, price_elp:732.00 },
-  CH:    { price_base:2304.6493, price_elp:844.00 },
   ES:    { price_base: 350.0841, price_elp:362.00 },
   FR:    { price_base: 427.7581, price_elp:283.00 },
   GB:    { price_base: 513.9847, price_elp:497.00 },
   GR:    { price_base: 192.3869, price_elp:243.00 },
   IT:    { price_base: 730.8197, price_elp:333.00 },
-  Other: { price_base:1359.8109, price_elp:546.00 },
   PT:    { price_base: 342.2712, price_elp:270.00 },
-  US:    { price_base:1646.5535, price_elp:3006.00 },
-  ZA:    { price_base:1458.2414, price_elp:259.00 },
 };
 
 // Full component data for Components tab display
 var COUNTRY_DATA_FULL = {
-  AE:    { median:8866912, commission:0.020, leads_per_listing:0.0948, lead_per_elp_3m:1.3467, demand_multiplier:0.900 },
-  CH:    { median:5761624, commission:0.025, leads_per_listing:0.9833, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
   ES:    { median:2756000, commission:0.030, leads_per_listing:0.1681, lead_per_elp_3m:1.1330, demand_multiplier:1.010 },
   FR:    { median:2490000, commission:0.030, leads_per_listing:0.2248, lead_per_elp_3m:2.3662, demand_multiplier:0.900 },
   GB:    { median:4395000, commission:0.013, leads_per_listing:0.2788, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
   GR:    { median:1900000, commission:0.030, leads_per_listing:0.0887, lead_per_elp_3m:0.9964, demand_multiplier:1.300 },
   IT:    { median:1890000, commission:0.030, leads_per_listing:0.4502, lead_per_elp_3m:2.0376, demand_multiplier:0.900 },
-  Other: { median:3100000, commission:0.030, leads_per_listing:0.8390, lead_per_elp_3m:1.9754, demand_multiplier:0.934 },
   PT:    { median:2150000, commission:0.030, leads_per_listing:0.1066, lead_per_elp_3m:1.1387, demand_multiplier:0.920 },
-  US:    { median:8200000, commission:0.055, leads_per_listing:0.1232, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
-  ZA:    { median:1950000, commission:0.030, leads_per_listing:0.9933, lead_per_elp_3m:3.0000, demand_multiplier:0.900 },
 };
 
 
